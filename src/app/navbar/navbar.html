@@ -1,0 +1,21 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <span class="app-title">Angular Demo App</span>
+  </div>
+  <ul class="navbar-links">
+    <li>
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Home</a
+      >
+    </li>
+    <li><a routerLink="/todo" routerLinkActive="active">To-Do</a></li>
+    <li><a routerLink="/newspaper" routerLinkActive="active">Newspaper</a></li>
+  </ul>
+  <div class="navbar-user">
+    <span class="user-greeting">Hello, {{ userName }}!</span>
+    <!-- Optionally add a user avatar/icon here -->
+  </div>
+</nav>

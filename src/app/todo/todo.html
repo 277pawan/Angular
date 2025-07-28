@@ -1,0 +1,158 @@
+<div class="todo-app">
+  <!-- Header Section -->
+  <div class="header">
+    <h1 class="app-title">
+      <span class="icon">✨</span>
+      TaskMaster
+    </h1>
+    <p class="app-subtitle">Organize your life, one task at a time</p>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ getTotalTasks() }}</div>
+        <div class="stat-label">Total Tasks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ getCompletedTasks() }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ getPendingTasks() }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Form -->
+  <div class="form-container">
+    <form (ngSubmit)="handleSubmit()" class="todo-form">
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="todoTask">Task Description</label>
+          <input
+            [(ngModel)]="todoTask"
+            type="text"
+            name="todoTask"
+            id="todoTask"
+            placeholder="What needs to be done?"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="category">Category</label>
+          <select [(ngModel)]="selectedCategory" name="category" id="category">
+            <option value="work">🏢 Work</option>
+            <option value="personal">👤 Personal</option>
+            <option value="shopping">🛒 Shopping</option>
+            <option value="health">💪 Health</option>
+            <option value="study">📚 Study</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="priority">Priority</label>
+          <select [(ngModel)]="selectedPriority" name="priority" id="priority">
+            <option value="low">🟢 Low</option>
+            <option value="medium">🟡 Medium</option>
+            <option value="high">🔴 High</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="add-btn" [disabled]="!todoTask.trim()">
+        <span class="btn-icon">➕</span>
+        Add Task
+      </button>
+    </form>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="controls-container">
+    <div class="search-container">
+      <input
+        [(ngModel)]="searchTerm"
+        type="text"
+        placeholder="🔍 Search tasks..."
+        class="search-input"
+      />
+    </div>
+
+    <div class="filter-tabs">
+      @for (filter of filters; track filter.key) {
+        <button
+          (click)="setActiveFilter(filter.key)"
+          [class.active]="activeFilter === filter.key"
+          class="filter-tab"
+        >
+          {{ filter.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Tasks List -->
+  <div class="tasks-container">
+    <div class="tasks-grid">
+      @for (todo of getFilteredTasks(); track todo.id) {
+        <div
+          class="task-card"
+          [class.completed]="todo.completed"
+          [class.high-priority]="todo.priority === 'high'"
+        >
+          <div class="task-header">
+            <div class="task-meta">
+              <span class="category-badge" [attr.data-category]="todo.category">
+                {{ getCategoryIcon(todo.category) }} {{ todo.category }}
+              </span>
+              <span class="priority-badge" [attr.data-priority]="todo.priority">
+                {{ getPriorityIcon(todo.priority) }}
+              </span>
+            </div>
+
+            <div class="task-actions">
+              <button
+                (click)="deleteTask(todo.id)"
+                class="action-btn delete-btn"
+                title="Delete"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <div class="task-content">
+            <div class="checkbox-container">
+              <input
+                type="checkbox"
+                [checked]="todo.completed"
+                (change)="toggleComplete(todo.id)"
+                class="task-checkbox"
+              />
+            </div>
+
+            <div class="task-details">
+              <p class="task-text" [class.completed-text]="todo.completed">
+                {{ todo.task }}
+              </p>
+
+              <div class="task-info">
+                <span class="created-date">
+                  📅 {{ todo.createdAt | date: "MMM d" }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <!-- Empty State -->
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <h3>No tasks found</h3>
+          <p>Create your first task to get started!</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
