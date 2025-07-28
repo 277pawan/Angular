@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { User as userService } from '../service/user';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,10 @@ export class Home {
   registrationForm: FormGroup;
   isSubmitting = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private userService: userService,
+  ) {
     this.registrationForm = this.formBuilder.group(
       {
         firstName: ['', [Validators.required]],
@@ -50,12 +54,20 @@ export class Home {
       this.isSubmitting = true;
 
       // Simulate API call
-      setTimeout(() => {
-        console.log('Registration Data:', this.registrationForm.value);
-        alert('Registration successful! Welcome to our platform.');
-        this.isSubmitting = false;
-        this.registrationForm.reset();
-      }, 2000);
+      this.userService.addUser(this.registrationForm.value).subscribe({
+        next: (res: any) => {
+          console.log('User added:', res);
+          alert('Registration successful! Welcome to our platform.');
+          this.registrationForm.reset();
+        },
+        error: (err: any) => {
+          console.error('Registration failed', err);
+          alert('Failed to register. Please try again.');
+        },
+        complete: () => {
+          this.isSubmitting = false;
+        },
+      });
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.registrationForm.controls).forEach((key) => {
