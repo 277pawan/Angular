@@ -1,1 +1,22 @@
-<p>newspaper works!</p>
+<div class="product-list">
+  @if (productData.products && productData.products.length > 0) {
+    @for (product of productData.products; track product.id) {
+      <div class="product-card">
+        <img
+          [src]="product.thumbnail"
+          [alt]="product.title"
+          height="200"
+          width="200"
+          class="product-image"
+        />
+        <div class="product-info">
+          <h2 class="product-title">{{ product.title }}</h2>
+          <p class="product-description">{{ product.description }}</p>
+          <p class="product-price">${{ product.price }}</p>
+        </div>
+      </div>
+    }
+  } @else {
+    <p>Loading products...</p>
+  }
+</div>
