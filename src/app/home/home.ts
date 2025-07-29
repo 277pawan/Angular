@@ -14,13 +14,12 @@ import { loadCookies } from '../store/user/user.action';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
-  // Both forms
-  userFromCookies: any;
   registrationForm: FormGroup;
   loginForm: FormGroup;
   isSubmitting = false;
@@ -33,14 +32,12 @@ export class Home {
     private cookieService: CookieService,
     private store: Store,
   ) {
-    // Registration form
     this.registrationForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
 
-    // Login form (only email, password)
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
@@ -48,20 +45,30 @@ export class Home {
   }
 
   ngOnInit() {
-    this.userFromCookies = this.cookieService.get('user');
-    this.store.dispatch(
-      loadCookies({ user: JSON.parse(this.userFromCookies) }),
-    );
+    this.loadUserFromCookies();
   }
 
-  // get User from cookie function
+  loadUserFromCookies() {
+    const userCookie = this.cookieService.get('user');
+    if (userCookie) {
+      try {
+        const userData = JSON.parse(userCookie);
+        this.store.dispatch(loadCookies({ user: userData }));
+      } catch (e) {
+        console.error('Error parsing user cookie', e);
+        this.clearInvalidCookie();
+      }
+    }
+  }
 
-  // Registration submit
+  clearInvalidCookie() {
+    this.cookieService.delete('user');
+    this.store.dispatch(loadCookies({ user: null }));
+  }
+
   onSubmitRegistration() {
     if (this.registrationForm.valid) {
       this.isSubmitting = true;
-
-      // Add User API call
       this.userService.addUser(this.registrationForm.value).subscribe({
         next: (res: any) => {
           alert('Registration successful! Welcome to our platform.');
@@ -81,24 +88,23 @@ export class Home {
     }
   }
 
-  // Login submit (example stub)
   onLogin() {
     if (this.loginForm.valid) {
       this.isSubmitting = true;
       this.userService.loginUser(this.loginForm.value).subscribe({
         next: (res: any) => {
-          alert('Login Successfull');
+          alert('Login Successful');
           this.userObject = {
             id: res.id,
             name: res.firstName,
             email: res.email,
           };
-          this.cookieService.set('user', JSON.stringify(this.userObject), 7);
+          this.setUserCookie(this.userObject);
           this.store.dispatch(UserAction.setUser({ user: this.userObject }));
           this.loginForm.reset();
         },
         error: (err) => {
-          console.log('Login Failed:-', err);
+          console.log('Login Failed:', err);
         },
         complete: () => {
           this.isSubmitting = false;
@@ -107,6 +113,18 @@ export class Home {
     } else {
       Object.values(this.loginForm.controls).forEach((c) => c.markAsTouched());
     }
+  }
+
+  setUserCookie(user: { id: string; name: string; email: string }) {
+    this.cookieService.set(
+      'user',
+      JSON.stringify(user),
+      7,
+      '/',
+      '',
+      true,
+      'Lax',
+    );
   }
 
   toggleLoginForm() {
