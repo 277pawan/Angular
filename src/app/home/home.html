@@ -38,122 +38,195 @@
   <div class="right-section">
     <div class="form-container">
       <div class="form-header">
-        <h2>Create Your Account</h2>
+        @if (loginFormContainer) {
+          <h2>Login</h2>
+        } @else {
+          <h2>Create Your Account</h2>
+        }
         <p>Start your journey with us today</p>
       </div>
 
-      <form
-        [formGroup]="registrationForm"
-        (ngSubmit)="onSubmit()"
-        class="registration-form"
-      >
-        <div class="form-group">
-          <label for="firstName">First Name</label>
-          <input
-            type="text"
-            id="firstName"
-            formControlName="firstName"
-            [class.error]="
-              registrationForm.get('firstName')?.invalid &&
-              registrationForm.get('firstName')?.touched
-            "
-            placeholder="Enter your first name"
-          />
-          <div
-            class="error-message"
-            *ngIf="
-              registrationForm.get('firstName')?.invalid &&
-              registrationForm.get('firstName')?.touched
-            "
-          >
-            First name is required
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="lastName">Last Name</label>
-          <input
-            type="text"
-            id="lastName"
-            formControlName="lastName"
-            [class.error]="
-              registrationForm.get('lastName')?.invalid &&
-              registrationForm.get('lastName')?.touched
-            "
-            placeholder="Enter your last name"
-          />
-          <div
-            class="error-message"
-            *ngIf="
-              registrationForm.get('lastName')?.invalid &&
-              registrationForm.get('lastName')?.touched
-            "
-          >
-            Last name is required
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input
-            type="email"
-            id="email"
-            formControlName="email"
-            [class.error]="
-              registrationForm.get('email')?.invalid &&
-              registrationForm.get('email')?.touched
-            "
-            placeholder="Enter your email"
-          />
-          <div
-            class="error-message"
-            *ngIf="
-              registrationForm.get('email')?.invalid &&
-              registrationForm.get('email')?.touched
-            "
-          >
-            <span *ngIf="registrationForm.get('email')?.errors?.['required']"
-              >Email is required</span
-            >
-            <span *ngIf="registrationForm.get('email')?.errors?.['email']"
-              >Please enter a valid email</span
-            >
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            formControlName="password"
-            [class.error]="
-              registrationForm.get('password')?.invalid &&
-              registrationForm.get('password')?.touched
-            "
-            placeholder="Create a strong password"
-          />
-          <div
-            class="error-message"
-            *ngIf="
-              registrationForm.get('password')?.invalid &&
-              registrationForm.get('password')?.touched
-            "
-          >
-            Password must be at least 6 characters long
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          class="submit-btn"
-          [disabled]="registrationForm.invalid || isSubmitting"
-          [class.loading]="isSubmitting"
+      @if (!loginFormContainer) {
+        <!-- Registration Form -->
+        <form
+          [formGroup]="registrationForm"
+          (ngSubmit)="onSubmitRegistration()"
+          class="registration-form"
         >
-          <span *ngIf="!isSubmitting">Create Account</span>
-          <span *ngIf="isSubmitting">Creating Account...</span>
-        </button>
-      </form>
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              formControlName="username"
+              [class.error]="
+                registrationForm.get('username')?.invalid &&
+                registrationForm.get('username')?.touched
+              "
+              placeholder="Enter your last name"
+            />
+            <div
+              class="error-message"
+              *ngIf="
+                registrationForm.get('username')?.invalid &&
+                registrationForm.get('username')?.touched
+              "
+            >
+              Username is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              [class.error]="
+                registrationForm.get('email')?.invalid &&
+                registrationForm.get('email')?.touched
+              "
+              placeholder="Enter your email"
+            />
+            <div
+              class="error-message"
+              *ngIf="
+                registrationForm.get('email')?.invalid &&
+                registrationForm.get('email')?.touched
+              "
+            >
+              <span *ngIf="registrationForm.get('email')?.errors?.['required']"
+                >Email is required</span
+              >
+              <span *ngIf="registrationForm.get('email')?.errors?.['email']"
+                >Please enter a valid email</span
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              formControlName="password"
+              [class.error]="
+                registrationForm.get('password')?.invalid &&
+                registrationForm.get('password')?.touched
+              "
+              placeholder="Create a strong password"
+            />
+            <div
+              class="error-message"
+              *ngIf="
+                registrationForm.get('password')?.invalid &&
+                registrationForm.get('password')?.touched
+              "
+            >
+              Password must be at least 6 characters long
+            </div>
+          </div>
+
+          <p>
+            Already have an account?
+            <span
+              (click)="toggleLoginForm()"
+              style="cursor: pointer; color: blue"
+              >Log in</span
+            >
+          </p>
+
+          <button
+            type="submit"
+            class="submit-btn"
+            [disabled]="registrationForm.invalid || isSubmitting"
+            [class.loading]="isSubmitting"
+          >
+            <span *ngIf="!isSubmitting">Create Account</span>
+            <span *ngIf="isSubmitting">Creating Account...</span>
+          </button>
+        </form>
+      } @else {
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+          <div class="form-group">
+            <label for="loginUsername">Username</label>
+            <input
+              type="text"
+              id="loginUername"
+              formControlName="username"
+              [class.error]="
+                loginForm.get('username')?.invalid &&
+                loginForm.get('username')?.touched
+              "
+              placeholder="Enter your username..."
+            />
+            <div
+              class="error-message"
+              *ngIf="
+                loginForm.get('username')?.invalid &&
+                loginForm.get('username')?.touched
+              "
+            >
+              <span *ngIf="loginForm.get('username')?.errors?.['required']"
+                >Username is required</span
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input
+              type="password"
+              id="loginPassword"
+              formControlName="password"
+              [class.error]="
+                loginForm.get('password')?.invalid &&
+                loginForm.get('password')?.touched
+              "
+              placeholder="Enter your password"
+            />
+            <div
+              class="error-message"
+              *ngIf="
+                loginForm.get('password')?.invalid &&
+                loginForm.get('password')?.touched
+              "
+            >
+              Password is required
+            </div>
+          </div>
+
+          @if (loginFormContainer) {
+            <p>
+              Don't have an account?
+              <span
+                (click)="toggleLoginForm()"
+                style="cursor: pointer; color: blue"
+                >Sign up</span
+              >
+            </p>
+          } @else {
+            <p>
+              Already have an account?
+              <span
+                (click)="toggleLoginForm()"
+                style="cursor: pointer; color: blue"
+                >Log in</span
+              >
+            </p>
+          }
+          <button
+            type="submit"
+            class="submit-btn"
+            [disabled]="loginForm.invalid || isSubmitting"
+            [class.loading]="isSubmitting"
+          >
+            <span *ngIf="!isSubmitting">Log in</span>
+            <span *ngIf="isSubmitting">Logging in...</span>
+          </button>
+        </form>
+      }
     </div>
   </div>
 </div>
