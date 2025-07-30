@@ -57,3 +57,12 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Login Instructions
+
+For authentication during development and testing, this project uses the [dummyjson.com](https://dummyjson.com/) API. Please use the following credentials to log in:
+
+- **Username:** sophiab
+- **Password:** sophiabpass
+
+This allows you to test login-related features easily without needing to set up your own backend.
