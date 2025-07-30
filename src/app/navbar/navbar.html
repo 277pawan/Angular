@@ -15,7 +15,7 @@
     <li><a routerLink="/newspaper" routerLinkActive="active">Newspaper</a></li>
   </ul>
   <div class="navbar-user">
-    <span class="user-greeting">Hello, {{ userName }}!</span>
+    <p *ngIf="(user$ | async)?.user as user">Hello, {{ user?.name }}</p>
     <!-- Optionally add a user avatar/icon here -->
   </div>
 </nav>

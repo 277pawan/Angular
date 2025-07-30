@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 interface userType {
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   password: string;
 }
@@ -17,6 +17,11 @@ export class User {
 
   addUser(userData: userType): Observable<any> {
     const url = 'https://dummyjson.com/users/add';
+    return this.http.post(url, userData);
+  }
+
+  loginUser(userData: userType) {
+    const url = 'https://dummyjson.com/user/login';
     return this.http.post(url, userData);
   }
 }
